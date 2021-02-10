@@ -11,26 +11,37 @@ import { Episode } from './podcasts/entities/episode.entity';
 import { User } from './users/entities/user.entity';
 import { Review } from './podcasts/entities/review.entity';
 import { JwtMiddleware } from './jwt/jwt.middleware';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      ignoreEnvFile: process.env.NODE_ENV === "prod",      
+      ignoreEnvFile: process.env.NODE_ENV === "production",      
       envFilePath: process.env.NODE_ENV === "dev" ? ".env.dev" : ".env.test",
         
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port:+process.env.DB_PORT,
-      username: process.env.DB_USER,
-      password: process.env.DB_PW, 
-      database:process.env.DB_NAME,      
-      synchronize: process.env.NODE_ENV !=="prod",
-      logging:  process.env.NODE_ENV !=="prod" && process.env.NODE_ENV !== "test",
-      entities: [Podcast, Episode, User, Review],     
-    }),
+    TypeOrmModule.forRoot(
+      {
+        type: "postgres",
+        ...(process.env.DATABASE_URL
+          ? {
+              url: process.env.DATABASE_URL,
+              ssl: { rejectUnauthorized: false },
+            }
+          : {
+              database: process.env.DB_NAME,
+              host: process.env.DB_HOST,
+              username: process.env.DB_USER,
+              password: process.env.DB_PASSWORD,
+              port: +process.env.DB_PORT,
+              ssl: { rejectUnauthorized: false },
+            }),
+        synchronize: process.env.NODE_ENV !=="production",
+        logging: process.env.NODE_ENV !== "production",
+        entities: [Podcast, Episode, User, Review],
+      }
+    ),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
       context: ({ req }) => {
@@ -45,7 +56,8 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
     AuthModule,
     PodcastModule,
     UserModule,
-    JwtModule
+    JwtModule,
+    UploadsModule
   ],
   //controllers: [AppController],
   //providers: [AppService],
