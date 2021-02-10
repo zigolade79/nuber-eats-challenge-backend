@@ -33,11 +33,11 @@ import { UploadsModule } from './uploads/uploads.module';
               database: process.env.DB_NAME,
               host: process.env.DB_HOST,
               username: process.env.DB_USER,
-              password: process.env.DB_PASSWORD,
+              password: process.env.DB_PW,
               port: +process.env.DB_PORT,
-              ssl: { rejectUnauthorized: false },
             }),
         synchronize: process.env.NODE_ENV !=="production",
+        //synchronize: true,
         logging: process.env.NODE_ENV !== "production",
         entities: [Podcast, Episode, User, Review],
       }
