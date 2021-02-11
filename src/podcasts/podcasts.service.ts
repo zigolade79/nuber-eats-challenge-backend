@@ -142,17 +142,10 @@ export class PodcastsService {
   async myPodcasts(host:User): Promise<MyPodcastsOutput> {
     try {
       console.log("myPodcasts");
-      const hostData = await this.userRepository.findOne(host, {relations:["podcasts"]});
-      if(hostData && "podcasts" in hostData){ //있으면 그대로  return
+      const podcasts = await this.podcastRepository.find({host});
         return {
           ok: true,
-          podcasts: hostData.podcasts,
-        };
-      }
-      return {//없으면 빈 array 넣어서  return
-        ok: true,
-        podcasts: [],
-      };
+          podcasts}
     } catch (e) {
       console.log(e);
       return this.InternalServerErrorOutput;
