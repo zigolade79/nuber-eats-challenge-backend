@@ -149,9 +149,9 @@ export class PodcastsService {
           podcasts: hostData.podcasts,
         };
       }
-      return {//없으면  null 을 넣어서  return
+      return {//없으면 빈 array 넣어서  return
         ok: true,
-        podcasts: null,
+        podcasts: [],
       };
     } catch (e) {
       console.log(e);
