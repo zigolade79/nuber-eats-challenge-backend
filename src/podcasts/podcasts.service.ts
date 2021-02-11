@@ -171,13 +171,15 @@ export class PodcastsService {
 
   async createPodcast(
     host: User,
-    { title, category }: CreatePodcastInput
+    { title, category, description, thumbnail }: CreatePodcastInput
   ): Promise<CreatePodcastOutput> {
     try {
       const newPodcast = this.podcastRepository.create({
         title,
         category,
         host,
+        description,
+        thumbnail
       });
       const saved = await this.podcastRepository.save(newPodcast);
 
