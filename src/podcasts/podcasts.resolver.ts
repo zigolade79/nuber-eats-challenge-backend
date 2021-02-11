@@ -29,6 +29,9 @@ import {
   GetEpisodesInput,
   GetEpisodesOutput,
   GetEpisodeOutput,
+  MyPodcastsOutput,
+  MyPodcastOutput,
+  MyPodcastInput
 } from "./dtos/podcast.dto";
 import { UpdatePodcastInput } from "./dtos/update-podcast.dto";
 import { Episode } from "./entities/episode.entity";
@@ -157,6 +160,29 @@ export class PodcastsResolver {
     return this.podcastsService.seePodcastReviews(input);
   }
 
+  @Role(["Any"])
+  @Query((returns) => GetRecentlyPodcastOutput)
+  getRecentlyPodcast(
+    @Args("input") input: GetRecentlyPodcastInput
+  ): Promise<GetRecentlyPodcastOutput> {
+    return this.podcastsService.getRecentlyPodcast(input);
+  }
+
+  @Role(["Any"])
+  @Query((returns) => GetPodcastsByCategoryOutput)
+  getPodcastByCategory(
+    @Args("input") input: GetPodcastsByCategoryInput
+  ): Promise<GetPodcastsByCategoryOutput> {
+    return this.podcastsService.getPodcastsByCategory(input);
+  }
+
+  @Query(returns=> MyPodcastsOutput)
+  @Role(["Host"])
+  myPodcasts(@AuthUser() host:User): Promise<MyPodcastsOutput>{
+    return this.podcastsService.myPodcasts(host);
+  }
+
+
   @ResolveField((type) => Boolean, { nullable: true })
   @Role(["Any"])
   isOnSubscribe(
@@ -258,22 +284,7 @@ export class EpisodeResolver {
     return this.podcastService.seedReviews();
   }
 */
-  @Role(["Any"])
-  @Query((returns) => GetRecentlyPodcastOutput)
-  getRecentlyPodcast(
-    @Args("input") input: GetRecentlyPodcastInput
-  ): Promise<GetRecentlyPodcastOutput> {
-    return this.podcastService.getRecentlyPodcast(input);
-  }
-
-  @Role(["Any"])
-  @Query((returns) => GetPodcastsByCategoryOutput)
-  getPodcastByCategory(
-    @Args("input") input: GetPodcastsByCategoryInput
-  ): Promise<GetPodcastsByCategoryOutput> {
-    return this.podcastService.getPodcastsByCategory(input);
-  }
-
+ 
   @Role(["Any"])
   @Query((returns) => GetRecentlyEpisodesOutput)
   getRecentlyEpisodes(

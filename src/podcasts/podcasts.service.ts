@@ -28,6 +28,8 @@ import {
   GetRecentlyEpisodesOutput,
   GetEpisodesOutput,
   GetEpisodesInput,
+  MyPodcastsOutput,
+  MyPodcastInput,
 } from "./dtos/podcast.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ILike, Repository } from "typeorm";
@@ -136,6 +138,28 @@ export class PodcastsService {
       return this.InternalServerErrorOutput;
     }
   }
+
+  async myPodcasts(host:User): Promise<MyPodcastsOutput> {
+    try {
+      console.log("myPodcasts");
+      const hostData = await this.userRepository.findOne(host, {relations:["podcasts"]});
+      if(hostData && "podcasts" in hostData){ //있으면 그대로  return
+        return {
+          ok: true,
+          podcasts: hostData.podcasts,
+        };
+      }
+      return {//없으면  null 을 넣어서  return
+        ok: true,
+        podcasts: null,
+      };
+    } catch (e) {
+      console.log(e);
+      return this.InternalServerErrorOutput;
+    }
+  }
+
+ 
 
   async isOnSubscribe(listener: User, podcast: Podcast): Promise<Boolean> {
     try {
